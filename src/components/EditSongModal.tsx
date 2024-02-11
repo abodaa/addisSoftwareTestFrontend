@@ -1,27 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useAppDispatch } from "../state/hooks";
+
 import { editSong } from "../features/songsSlice";
 import { CgClose } from "react-icons/cg";
 
-export default function EditSongModal({ setIsModalOpen, isModalOpen, song }) {
-  const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
+interface FormData {
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  songId: string;
+}
+
+interface Song {
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  _id: string;
+}
+
+interface EditSongModalProps {
+  setIsModalOpen: void;
+  isModalOpen: boolean;
+  song: Song;
+}
+
+export default function EditSongModal({
+  setIsModalOpen,
+  isModalOpen,
+  song,
+}: EditSongModalProps) {
+  const dispatch = useAppDispatch();
+  const [formData, setFormData] = useState<FormData>({
     title: song.title,
     artist: song.artist,
     album: song.album,
     genre: song.genre,
     songId: song._id,
   });
-  console.log(song);
-
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(editSong(formData))
       .then(setIsModalOpen)
@@ -51,7 +76,6 @@ export default function EditSongModal({ setIsModalOpen, isModalOpen, song }) {
               <input
                 className="appearance-none w-full bg-otherColor text-gray-500 border rounded py-3 px-4 mb-3 text-sm leading-tight focus:outline-none bsmmd:text-md"
                 type="text"
-                defaultValue="title"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}

@@ -1,26 +1,34 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../state/hooks";
+
 import { createSong } from "../features/songsSlice";
+import { useState, ChangeEvent, FormEvent } from "react";
+
+interface FormData {
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+}
 
 export default function AddSongCard() {
-  const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
+  const dispatch = useAppDispatch();
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     artist: "",
     album: "",
     genre: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(createSong(formData)).catch((error) => {
+    dispatch(createSong(formData)).catch((error: Error) => {
       console.error("Error adding song:", error.message);
     });
   };

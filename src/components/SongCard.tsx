@@ -2,17 +2,17 @@ import { RxAvatar } from "react-icons/rx";
 import poster from "../assets/musicposterplaceholder.png";
 import { MdOutlineAlbum } from "react-icons/md";
 import { IoMdMusicalNote } from "react-icons/io";
-import { BsThreeDotsVertical } from "react-icons/bs";
-
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchSongs } from "../features/songsSlice";
 import DeleteSongButton from "../components/DeleteSongButton";
 import EditSongModal from "../components/EditSongModal";
 import { BiEdit } from "react-icons/bi";
+
+import { UseAppSelector, useAppDispatch } from "../state/hooks";
+
 export default function SongCard() {
-  const dispatch = useDispatch();
-  const song = useSelector((state) => state.songs);
+  const dispatch = useAppDispatch();
+  const song = UseAppSelector((state) => state.songs);
   useEffect(() => {
     dispatch(fetchSongs());
   }, []);
@@ -27,7 +27,7 @@ export default function SongCard() {
       {!song.loading && song.songs.length
         ? song.songs.map((song) => {
             return (
-              <div>
+              <div key={song._id}>
                 <div className="relative p-5 bg-gray-300 flex items-center gap-4 rounded-xl">
                   <img
                     src={poster}

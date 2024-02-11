@@ -1,7 +1,23 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const initialState = {
+// Ts types
+export type Songs = {
+  _id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+};
+
+type InitialState = {
+  loading: boolean;
+  songs: Songs[];
+  error: string;
+};
+
+// Initial State
+const initialState: InitialState = {
   loading: false,
   songs: [],
   error: "",
@@ -9,7 +25,6 @@ const initialState = {
 // Fetch Songs
 export const fetchSongs = createAsyncThunk("songs/fetchSongs", async () => {
   const response = await axios.get("http://localhost:3000/api/v1/songs");
-  console.log(response.data.data);
   return response.data.data;
 });
 
@@ -49,20 +64,24 @@ export const deleteSong = createAsyncThunk(
 const songsSlice = createSlice({
   name: "songs",
   initialState,
+  reducers: {},
   extraReducers: (builder) => {
     // Get Songs
     builder.addCase(fetchSongs.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(fetchSongs.fulfilled, (state, action) => {
-      state.loading = false;
-      state.songs = action.payload;
-      state.error = "";
-    });
+    builder.addCase(
+      fetchSongs.fulfilled,
+      (state, action: PayloadAction<Songs[]>) => {
+        state.loading = false;
+        state.songs = action.payload;
+        state.error = "";
+      }
+    );
     builder.addCase(fetchSongs.rejected, (state, action) => {
       (state.loading = false),
         (state.songs = []),
-        (state.error = action.error.message);
+        (state.error = action.error.message || "Something went wrong");
     });
 
     // Create Song
@@ -76,7 +95,7 @@ const songsSlice = createSlice({
     });
     builder.addCase(createSong.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message;
+      state.error = action.error.message || "Something went wreong";
     });
 
     // Edit Song
@@ -93,7 +112,7 @@ const songsSlice = createSlice({
     });
     builder.addCase(editSong.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message;
+      state.error = action.error.message || "Something went wrong";
     });
 
     // Delete Song
@@ -107,9 +126,10 @@ const songsSlice = createSlice({
     });
     builder.addCase(deleteSong.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message;
+      state.error = action.error.message || "Something went wrong";
     });
   },
 });
 
 export default songsSlice.reducer;
+
