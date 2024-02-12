@@ -2,18 +2,30 @@ import { CgMusicSpeaker } from "react-icons/cg";
 import { IoMdMusicalNote } from "react-icons/io";
 import { MdOutlineAlbum } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UseAppSelector, useAppDispatch } from "../state/hooks";
 import { fetchStat } from "../features/statSlice";
+import { fetchSongs } from "../features/songsSlice";
 
 export default function StatsCard() {
+  // Filter States
+  const [filterByAlbum, setFilterByAlbum] = useState("");
+  const [filterByArtist, setFilterByArtist] = useState("");
+  const [filterByGenre, setFilterByGenre] = useState("");
+  console.log(filterByAlbum, filterByArtist, filterByGenre);
+
   const dispatch = useAppDispatch();
   const stat = UseAppSelector((state) => state.stat);
   useEffect(() => {
     dispatch(fetchStat());
-  }, []);
-
+    dispatch(
+      fetchSongs({
+        filterByArtist: filterByArtist,
+        filterByAlbum: filterByAlbum,
+        filterByGenre: filterByGenre,
+      })
+    );
+  }, [filterByAlbum, filterByArtist, filterByGenre]);
 
   return (
     <div className="w-full bg-gray-300 p-6 rounded-xl">
@@ -46,7 +58,10 @@ export default function StatsCard() {
             },
           ].map((stat) => {
             return (
-              <div key={stat.name} className="flex flex-col items-center gap-1 text-gray-700 bg-white p-7 rounded-lg capitalize">
+              <div
+                key={stat.name}
+                className="flex flex-col items-center gap-1 text-gray-700 bg-white p-7 rounded-lg capitalize"
+              >
                 <stat.icon className=" text-3xl" />
                 <p className="text-sm">{stat.name}</p>
                 <p className="text-md font-bold">{stat.number}</p>
@@ -66,7 +81,11 @@ export default function StatsCard() {
 
             {stat.stat.genreCounts.map((genreSong) => {
               return (
-                <div key={genreSong._id} className="flex flex-col items-center gap-1 text-gray-700 bg-white p-2 rounded-lg capitalize">
+                <div
+                  onClick={() => setFilterByGenre(genreSong._id)}
+                  key={genreSong._id}
+                  className="flex flex-col items-center cursor-pointer gap-1 text-gray-700 bg-white p-2 rounded-lg capitalize hover:scale-105"
+                >
                   <p className="text-sm">{genreSong._id}</p>
                   <p className="text-sm font-bold bg-gray-300 px-4 rounded">
                     {genreSong.count} songs
@@ -83,7 +102,11 @@ export default function StatsCard() {
 
             {stat.stat.eachAlbumSongsCounts.map((albumSong) => {
               return (
-                <div key={albumSong._id} className="flex flex-col items-center text-center gap-1 text-gray-700 bg-white p-2 rounded-lg capitalize">
+                <div
+                  onClick={() => setFilterByAlbum(albumSong._id)}
+                  key={albumSong._id}
+                  className="flex flex-col items-center cursor-pointer gap-1 text-gray-700 bg-white p-2 rounded-lg capitalize hover:scale-105"
+                >
                   <p className="text-sm">{albumSong._id}</p>
                   <p className="text-sm font-bold bg-gray-300 px-4 rounded">
                     {albumSong.songsInAlbumCount} songs
@@ -99,7 +122,11 @@ export default function StatsCard() {
             <h3 className="font-bold">Artists</h3>
             {stat.stat.artistAlbumaAndSongsCounts.map((artistSong) => {
               return (
-                <div key={artistSong._id} className="flex flex-col items-center gap-1 text-center text-gray-700 bg-white p-2 rounded-lg capitalize">
+                <div
+                  onClick={() => setFilterByArtist(artistSong._id)}
+                  key={artistSong._id}
+                  className="flex flex-col items-center cursor-pointer gap-1 text-gray-700 bg-white p-2 rounded-lg capitalize hover:scale-105"
+                >
                   <p className="text-sm ">{artistSong._id}</p>
                   <p className="text-sm font-bold bg-gray-300 px-4 rounded">
                     {artistSong.albumCount} album

@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { data } from "autoprefixer";
 import axios from "axios";
 
 // Ts types
@@ -23,10 +24,21 @@ const initialState: InitialState = {
   error: "",
 };
 // Fetch Songs
-export const fetchSongs = createAsyncThunk("songs/fetchSongs", async () => {
-  const response = await axios.get("http://localhost:3000/api/v1/songs");
-  return response.data.data;
-});
+export const fetchSongs = createAsyncThunk(
+  "songs/fetchSongs",
+  async ({ filterByAlbum, filterByArtist, filterByGenre }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/songs?album=${filterByAlbum}&artist=${filterByArtist}&genre=${filterByGenre}`
+      );
+      console.log(response.data.data);
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+);
 
 // Create Songs
 export const createSong = createAsyncThunk(
