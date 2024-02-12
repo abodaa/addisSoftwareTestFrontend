@@ -40,6 +40,23 @@ export const fetchSongs = createAsyncThunk(
   }
 );
 
+// Fetch Songs for searching
+export const fetchSearchedSongs = createAsyncThunk(
+  "songs/fetchSongs",
+  async (searchByTitle) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/songs?title=${searchByTitle}`
+      );
+      console.log(response.data.data);
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+);
+
 // Create Songs
 export const createSong = createAsyncThunk(
   "songs/createSong",
@@ -81,6 +98,7 @@ const songsSlice = createSlice({
     // Get Songs
     builder.addCase(fetchSongs.pending, (state) => {
       state.loading = true;
+      state.error = "";
     });
     builder.addCase(
       fetchSongs.fulfilled,

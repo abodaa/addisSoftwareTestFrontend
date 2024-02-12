@@ -74,7 +74,6 @@ export default function StatsCard() {
       {/* Specific Songs Stats */}
       <div className="grid grid-cols-3 gap-2 mt-5 items-start justify-between">
         {/* Number of songs in each genre */}
-
         {stat.stat.genreCounts && (
           <div className="flex flex-col gap-1 text-gray-700 rounded-lg capitalize ">
             <h3 className="font-bold">Genres</h3>
