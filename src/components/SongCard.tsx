@@ -24,7 +24,7 @@ export default function SongCard() {
     <div className="capitalize flex flex-col gap-5">
       {song.loading && <div>Loading ...</div>}
       {!song.loading && song.error && <div> {song.error} </div>}
-      {!song.loading && song.songs
+      {!song.loading && song.songs.length
         ? song.songs.map((song) => {
             return (
               <div key={song._id}>

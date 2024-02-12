@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { data } from "autoprefixer";
+const BASE_URL = import.meta.env.VITE_REACT_API_URL;
 import axios from "axios";
 
 // Ts types
@@ -26,10 +26,10 @@ const initialState: InitialState = {
 // Fetch Songs
 export const fetchSongs = createAsyncThunk(
   "songs/fetchSongs",
-  async ({ filterByAlbum, filterByArtist, filterByGenre }) => {
+  async ({ filterByAlbum , filterByArtist, filterByGenre }) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/songs?album=${filterByAlbum}&artist=${filterByArtist}&genre=${filterByGenre}`
+        `${BASE_URL}/api/v1/songs?album=${filterByAlbum}&artist=${filterByArtist}&genre=${filterByGenre}`
       );
       console.log(response.data.data);
       return response.data.data;
@@ -46,7 +46,7 @@ export const fetchSearchedSongs = createAsyncThunk(
   async (searchByTitle) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/songs?title=${searchByTitle}`
+        `${BASE_URL}/api/v1/songs?title=${searchByTitle}`
       );
       console.log(response.data.data);
       return response.data.data;
@@ -61,10 +61,7 @@ export const fetchSearchedSongs = createAsyncThunk(
 export const createSong = createAsyncThunk(
   "songs/createSong",
   async (newSongData) => {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/songs",
-      newSongData
-    );
+    const response = await axios.post(`${BASE_URL}/api/v1/songs`, newSongData);
     return response.data.data;
   }
 );
@@ -74,7 +71,7 @@ export const editSong = createAsyncThunk(
   "songs/editSong",
   async (editedSongData) => {
     const response = await axios.patch(
-      `http://localhost:3000/api/v1/songs/${editedSongData.songId}`,
+      `${BASE_URL}/api/v1/songs/${editedSongData.songId}`,
       editedSongData
     );
     return response.data.data;
@@ -85,7 +82,7 @@ export const editSong = createAsyncThunk(
 export const deleteSong = createAsyncThunk(
   "songs/deleteSong",
   async (songId) => {
-    await axios.delete(`http://localhost:3000/api/v1/songs/${songId}`);
+    await axios.delete(`${BASE_URL}/api/v1/songs/${songId}`);
     return songId;
   }
 );
