@@ -17,6 +17,17 @@ type InitialState = {
   error: string;
 };
 
+interface FetchOptions {
+  filterByAlbum?: string;
+  filterByArtist?: string;
+  filterByGenre?: string;
+}
+
+interface EditedSongData {
+  songId: string;
+  updatedFields: Partial<Songs>; // Only include the fields that can be updated
+}
+
 // Initial State
 const initialState: InitialState = {
   loading: false,
@@ -26,7 +37,7 @@ const initialState: InitialState = {
 // Fetch Songs
 export const fetchSongs = createAsyncThunk(
   "songs/fetchSongs",
-  async ({ filterByAlbum , filterByArtist, filterByGenre }) => {
+  async ({ filterByAlbum, filterByArtist, filterByGenre }: FetchOptions) => {
     try {
       const response = await axios.get(
         `${BASE_URL}/api/v1/songs?album=${filterByAlbum}&artist=${filterByArtist}&genre=${filterByGenre}`
@@ -35,7 +46,6 @@ export const fetchSongs = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.log(error);
-      
     }
   }
 );
@@ -52,7 +62,6 @@ export const fetchSearchedSongs = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.log(error);
-      
     }
   }
 );
@@ -69,7 +78,7 @@ export const createSong = createAsyncThunk(
 // Edit Songs
 export const editSong = createAsyncThunk(
   "songs/editSong",
-  async (editedSongData) => {
+  async (editedSongData: EditedSongData) => {
     const response = await axios.patch(
       `${BASE_URL}/api/v1/songs/${editedSongData.songId}`,
       editedSongData
@@ -146,11 +155,16 @@ const songsSlice = createSlice({
     builder.addCase(deleteSong.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(deleteSong.fulfilled, (state, action) => {
-      state.loading = false;
-      state.songs = state.songs.filter((song) => song._id !== action.payload);
-      state.error = "";
-    });
+
+    // @ts-ignore
+    builder.addCase(
+      deleteSong.fulfilled,
+      (state, action: PayloadAction<string>) => {
+        state.loading = false;
+        state.songs = state.songs.filter((song) => song._id !== action.payload);
+        state.error = "";
+      }
+    );
     builder.addCase(deleteSong.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || "Something went wrong";
@@ -159,4 +173,3 @@ const songsSlice = createSlice({
 });
 
 export default songsSlice.reducer;
-

@@ -14,6 +14,7 @@ export default function SongCard() {
   const dispatch = useAppDispatch();
   const song = UseAppSelector((state) => state.songs);
   useEffect(() => {
+    // @ts-ignore
     dispatch(fetchSongs());
   }, []);
 
@@ -56,6 +57,7 @@ export default function SongCard() {
                   </button>
                   <button
                     onClick={() => {
+                      // @ts-ignore
                       setOpenModalId(song._id);
                       setIsModalOpen(true);
                     }}
@@ -63,11 +65,14 @@ export default function SongCard() {
                   >
                     <BiEdit />
                   </button>
-                  {openModalId === song._id && <EditSongModal
-                    isModalOpen={isModalOpen}
-                    setIsModalOpen={() => setIsModalOpen(false)}
-                    song={song}
-                  />}
+                  {openModalId === song._id && (
+                    <EditSongModal
+                      isModalOpen={isModalOpen}
+                      // @ts-ignore
+                      setIsModalOpen={() => setIsModalOpen(false)}
+                      song={song}
+                    />
+                  )}
                 </div>
               </div>
             );

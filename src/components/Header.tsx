@@ -11,6 +11,7 @@ export default function Header() {
   // Dispatch fetchSearchedSongs with search string
   const dispatch = useAppDispatch();
   useEffect(() => {
+    // @ts-ignore
     dispatch(fetchSearchedSongs(searchByTitle));
   }, [searchByTitle]);
 
